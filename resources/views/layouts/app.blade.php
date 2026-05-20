@@ -50,12 +50,25 @@
         <ul class="nav-links">
             <li><a href="{{ route('home') }}" class="{{ Route::currentRouteName() == 'home' ? 'active' : '' }}" data-transition>Home</a></li>
             <li><a href="{{ route('search') }}" class="{{ Route::currentRouteName() == 'search' ? 'active' : '' }}" data-transition>Search</a></li>
-            <li><a href="{{ route('dashboard') }}" class="{{ Route::currentRouteName() == 'dashboard' ? 'active' : '' }}" data-transition>Dashboard</a></li>
+            @auth
+                @if(Auth::user()->isAdmin())
+                    <li><a href="{{ route('admin.dashboard') }}" class="{{ Route::currentRouteName() == 'admin.dashboard' ? 'active' : '' }}" data-transition>Admin Console</a></li>
+                @else
+                    <li><a href="{{ route('dashboard') }}" class="{{ Route::currentRouteName() == 'dashboard' ? 'active' : '' }}" data-transition>Dashboard</a></li>
+                @endif
+                <li><a href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Logout</a></li>
+            @else
+                <li><a href="{{ route('login') }}" class="{{ Route::currentRouteName() == 'login' ? 'active' : '' }}" data-transition>Login</a></li>
+                <li><a href="{{ route('register') }}" class="{{ Route::currentRouteName() == 'register' ? 'active' : '' }}" data-transition>Register</a></li>
+            @endauth
         </ul>
         @auth
-            <a href="{{ route('dashboard') }}" class="nav-btn" data-transition>Account</a>
+            <span style="font-size: 12px; font-weight: 700; color: var(--accent-gold); letter-spacing: 1px; text-transform: uppercase; border: 1px solid rgba(234,179,8,0.3); padding: 6px 12px; border-radius: 4px; background: rgba(234,179,8,0.05);">Cell: {{ Auth::user()->name }}</span>
+            <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                @csrf
+            </form>
         @else
-            <a href="{{ route('dashboard') }}" class="nav-btn" data-transition>Explore Lab</a>
+            <a href="{{ route('login') }}" class="nav-btn" data-transition>Explore Lab</a>
         @endauth
     </nav>
 

@@ -20,22 +20,34 @@
         <!-- Numeric Counters Grid -->
         <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 30px; margin-bottom: 50px;">
             <div class="glass-panel stat-widget-card" style="padding: 30px; border-radius: 12px; position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 10px;">
-                <span style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">Borrowed Volumes</span>
-                <span class="stat-counter" data-target="14" style="font-size: 40px; font-weight: 800; font-family: var(--font-mono); color: var(--accent-gold);">0</span>
+                <span style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">Total Borrowed</span>
+                <span class="stat-counter" data-target="{{ $stats['total_borrowed'] }}" style="font-size: 40px; font-weight: 800; font-family: var(--font-mono); color: var(--accent-gold);">0</span>
             </div>
             <div class="glass-panel stat-widget-card" style="padding: 30px; border-radius: 12px; position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 10px;">
-                <span style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">Research Hours</span>
-                <span class="stat-counter" data-target="184" style="font-size: 40px; font-weight: 800; font-family: var(--font-mono); color: var(--accent-gold);">0</span>
+                <span style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">Currently Reading</span>
+                <span class="stat-counter" data-target="{{ $stats['currently_reading'] }}" style="font-size: 40px; font-weight: 800; font-family: var(--font-mono); color: var(--accent-gold);">0</span>
             </div>
             <div class="glass-panel stat-widget-card" style="padding: 30px; border-radius: 12px; position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 10px;">
-                <span style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">Current Citations</span>
-                <span class="stat-counter" data-target="42" style="font-size: 40px; font-weight: 800; font-family: var(--font-mono); color: var(--accent-gold);">0</span>
+                <span style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">Returned Volumes</span>
+                <span class="stat-counter" data-target="{{ $stats['books_returned'] }}" style="font-size: 40px; font-weight: 800; font-family: var(--font-mono); color: var(--accent-gold);">0</span>
             </div>
             <div class="glass-panel stat-widget-card" style="padding: 30px; border-radius: 12px; position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 10px;">
-                <span style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">Saved Searches</span>
-                <span class="stat-counter" data-target="7" style="font-size: 40px; font-weight: 800; font-family: var(--font-mono); color: var(--accent-gold);">0</span>
+                <span style="font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">Overdue Volumes</span>
+                <span class="stat-counter" data-target="{{ $stats['overdue'] }}" style="font-size: 40px; font-weight: 800; font-family: var(--font-mono); color: var(--accent-gold);">0</span>
             </div>
         </div>
+
+        @if (session('success'))
+            <div class="alert alert-success" style="margin-bottom: 40px;">
+                {{ session('success') }}
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div class="alert alert-error" style="margin-bottom: 40px;">
+                {{ session('error') }}
+            </div>
+        @endif
 
         <!-- Charts and Progress Section -->
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 60px;">
@@ -43,31 +55,18 @@
             <div class="glass-panel" style="padding: 40px; border-radius: 12px;">
                 <h3 style="font-family: var(--font-serif); font-size: 20px; color: var(--accent-gold); margin-bottom: 25px;">Reading Activity</h3>
                 <div style="display: flex; align-items: flex-end; justify-content: space-between; height: 180px; padding: 0 10px; border-left: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color);">
-                    <!-- We will animate these height grow using GSAP -->
-                    <div style="display: flex; flex-direction: column; align-items: center; width: 40px;">
-                        <div class="chart-bar" data-height="60%" style="width: 100%; background: linear-gradient(to top, var(--accent-gold), rgba(234,179,8,0.3)); border-radius: 4px 4px 0 0; height: 0%;"></div>
-                        <span style="font-size: 10px; color: var(--text-secondary); margin-top: 8px;">Mon</span>
-                    </div>
-                    <div style="display: flex; flex-direction: column; align-items: center; width: 40px;">
-                        <div class="chart-bar" data-height="90%" style="width: 100%; background: linear-gradient(to top, var(--accent-gold), rgba(234,179,8,0.3)); border-radius: 4px 4px 0 0; height: 0%;"></div>
-                        <span style="font-size: 10px; color: var(--text-secondary); margin-top: 8px;">Tue</span>
-                    </div>
-                    <div style="display: flex; flex-direction: column; align-items: center; width: 40px;">
-                        <div class="chart-bar" data-height="40%" style="width: 100%; background: linear-gradient(to top, var(--accent-gold), rgba(234,179,8,0.3)); border-radius: 4px 4px 0 0; height: 0%;"></div>
-                        <span style="font-size: 10px; color: var(--text-secondary); margin-top: 8px;">Wed</span>
-                    </div>
-                    <div style="display: flex; flex-direction: column; align-items: center; width: 40px;">
-                        <div class="chart-bar" data-height="75%" style="width: 100%; background: linear-gradient(to top, var(--accent-gold), rgba(234,179,8,0.3)); border-radius: 4px 4px 0 0; height: 0%;"></div>
-                        <span style="font-size: 10px; color: var(--text-secondary); margin-top: 8px;">Thu</span>
-                    </div>
-                    <div style="display: flex; flex-direction: column; align-items: center; width: 40px;">
-                        <div class="chart-bar" data-height="85%" style="width: 100%; background: linear-gradient(to top, var(--accent-gold), rgba(234,179,8,0.3)); border-radius: 4px 4px 0 0; height: 0%;"></div>
-                        <span style="font-size: 10px; color: var(--text-secondary); margin-top: 8px;">Fri</span>
-                    </div>
-                    <div style="display: flex; flex-direction: column; align-items: center; width: 40px;">
-                        <div class="chart-bar" data-height="30%" style="width: 100%; background: linear-gradient(to top, var(--accent-gold), rgba(234,179,8,0.3)); border-radius: 4px 4px 0 0; height: 0%;"></div>
-                        <span style="font-size: 10px; color: var(--text-secondary); margin-top: 8px;">Sat</span>
-                    </div>
+                    @php
+                        $maxActivity = max(1, count($readingActivity) > 0 ? max($readingActivity) : 1);
+                    @endphp
+                    @foreach($readingActivity as $day => $count)
+                        @php
+                            $heightPercent = round(($count / $maxActivity) * 100);
+                        @endphp
+                        <div style="display: flex; flex-direction: column; align-items: center; width: 40px;">
+                            <div class="chart-bar" data-height="{{ $heightPercent }}%" style="width: 100%; background: linear-gradient(to top, var(--accent-gold), rgba(234,179,8,0.3)); border-radius: 4px 4px 0 0; height: 0%;"></div>
+                            <span style="font-size: 10px; color: var(--text-secondary); margin-top: 8px;">{{ $day }}</span>
+                        </div>
+                    @endforeach
                 </div>
             </div>
 
@@ -80,28 +79,33 @@
                     <svg width="150" height="150" viewBox="0 0 36 36" style="transform: rotate(-90deg);" id="pie-chart-svg">
                         <!-- Circle background -->
                         <circle cx="18" cy="18" r="15.915" fill="transparent" stroke="rgba(255,255,255,0.05)" stroke-width="4"></circle>
-                        <!-- CS: 45% (dasharray: 45 55) -->
-                        <circle cx="18" cy="18" r="15.915" fill="transparent" stroke="var(--accent-gold)" stroke-width="4" stroke-dasharray="0 100" stroke-dashoffset="0" class="pie-segment" data-percent="45" id="pie-segment-1"></circle>
-                        <!-- Math: 30% (dasharray: 30 70, offset: -45) -->
-                        <circle cx="18" cy="18" r="15.915" fill="transparent" stroke="#3b82f6" stroke-width="4" stroke-dasharray="0 100" stroke-dashoffset="-45" class="pie-segment" data-percent="30" id="pie-segment-2"></circle>
-                        <!-- Physics: 25% (dasharray: 25 75, offset: -75) -->
-                        <circle cx="18" cy="18" r="15.915" fill="transparent" stroke="#10b981" stroke-width="4" stroke-dasharray="0 100" stroke-dashoffset="-75" class="pie-segment" data-percent="25" id="pie-segment-3"></circle>
+                        @php
+                            $totalCount = $categoryStats->sum('count');
+                            $accumulatedPercentage = 0;
+                        @endphp
+                        @foreach($categoryStats as $index => $cat)
+                            @php
+                                $percentage = $totalCount > 0 ? round(($cat->count / $totalCount) * 100) : 0;
+                                $dashoffset = -$accumulatedPercentage;
+                                $accumulatedPercentage += $percentage;
+                            @endphp
+                            <circle cx="18" cy="18" r="15.915" fill="transparent" stroke="{{ $cat->color ?? 'var(--accent-gold)' }}" stroke-width="4" stroke-dasharray="0 100" stroke-dashoffset="{{ $dashoffset }}" class="pie-segment" data-percent="{{ $percentage }}" id="pie-segment-{{ $index + 1 }}"></circle>
+                        @endforeach
                     </svg>
                     
                     <!-- Legends -->
                     <div style="display: flex; flex-direction: column; gap: 15px; font-size: 13px;">
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <div style="width: 12px; height: 12px; background: var(--accent-gold); border-radius: 3px;"></div>
-                            <span>Computer Science (45%)</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <div style="width: 12px; height: 12px; background: #3b82f6; border-radius: 3px;"></div>
-                            <span>Mathematics (30%)</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <div style="width: 12px; height: 12px; background: #10b981; border-radius: 3px;"></div>
-                            <span>Physics (25%)</span>
-                        </div>
+                        @forelse($categoryStats as $cat)
+                            @php
+                                $percentage = $totalCount > 0 ? round(($cat->count / $totalCount) * 100) : 0;
+                            @endphp
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="width: 12px; height: 12px; background: {{ $cat->color ?? 'var(--accent-gold)' }}; border-radius: 3px;"></div>
+                                <span>{{ $cat->name }} ({{ $percentage }}%)</span>
+                            </div>
+                        @empty
+                            <span style="color: var(--text-secondary);">No checkout data.</span>
+                        @endforelse
                     </div>
                 </div>
             </div>
@@ -111,30 +115,67 @@
         <div style="margin-bottom: 50px;">
             <h3 style="font-family: var(--font-serif); font-size: 24px; color: var(--text-primary); margin-bottom: 25px;">Currently Reading</h3>
             <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 30px;">
-                <!-- Simulated list -->
-                <div class="glass-panel dashboard-book-item" style="padding: 25px; border-radius: 12px; display: flex; gap: 20px; align-items: center; position: relative; overflow: hidden; cursor: pointer;">
-                    <div style="width: 60px; height: 85px; background: linear-gradient(135deg, var(--accent-gold), #0f172a); border-radius: 4px; box-shadow: 2px 5px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 24px; color: white;">💻</div>
-                    <div style="flex: 1;">
-                        <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 5px;">Clean Code</h4>
-                        <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 10px;">Due: 4 days remaining</p>
-                        <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden;">
-                            <div style="width: 75%; height: 100%; background: var(--accent-gold); border-radius: 2px;"></div>
+                @forelse($currentBorrowings as $borrow)
+                    <div class="glass-panel dashboard-book-item" style="padding: 25px; border-radius: 12px; display: flex; gap: 20px; align-items: center; position: relative; overflow: hidden;">
+                        <div style="width: 60px; height: 85px; background: linear-gradient(135deg, {{ $borrow->resource->category->color ?? '#eab308' }}, #0f172a); border-radius: 4px; box-shadow: 2px 5px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 24px; color: white;">
+                            {{ $borrow->resource->category->icon ?? '📖' }}
+                        </div>
+                        <div style="flex: 1; z-index: 2;">
+                            <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 160px;" title="{{ $borrow->resource->title }}">{{ $borrow->resource->title }}</h4>
+                            <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">
+                                @if($borrow->due_at->isPast())
+                                    <span style="color: #f87171; font-weight: 600;">Overdue by {{ $borrow->due_at->diffForHumans(null, true) }}</span>
+                                @else
+                                    Due in {{ $borrow->due_at->diffForHumans(null, true) }}
+                                @endif
+                            </p>
+                            <form action="{{ route('borrowings.return', $borrow->id) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="nav-btn" style="padding: 8px 16px; font-size: 11px; border-radius: 4px; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; display: inline-block;">Return Volume</button>
+                            </form>
                         </div>
                     </div>
-                </div>
-
-                <div class="glass-panel dashboard-book-item" style="padding: 25px; border-radius: 12px; display: flex; gap: 20px; align-items: center; position: relative; overflow: hidden; cursor: pointer;">
-                    <div style="width: 60px; height: 85px; background: linear-gradient(135deg, #3b82f6, #0f172a); border-radius: 4px; box-shadow: 2px 5px 10px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: center; font-size: 24px; color: white;">📐</div>
-                    <div style="flex: 1;">
-                        <h4 style="font-size: 15px; font-weight: 700; margin-bottom: 5px;">Linear Algebra</h4>
-                        <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 10px;">Due: 11 days remaining</p>
-                        <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.08); border-radius: 2px; overflow: hidden;">
-                            <div style="width: 30%; height: 100%; background: #3b82f6; border-radius: 2px;"></div>
-                        </div>
+                @empty
+                    <div class="glass-panel" style="padding: 40px; border-radius: 12px; text-align: center; grid-column: 1 / -1; color: var(--text-secondary);">
+                        No volumes currently checked out. <a href="{{ route('search') }}" style="color: var(--accent-gold); text-decoration: none; font-weight: 600;">Browse catalog</a> to check out a resource.
                     </div>
-                </div>
+                @endforelse
             </div>
         </div>
+
+        <!-- Borrow History -->
+        <div style="margin-bottom: 60px;">
+            <h3 style="font-family: var(--font-serif); font-size: 24px; color: var(--text-primary); margin-bottom: 25px;">Borrowing History</h3>
+            <div class="glass-panel" style="padding: 30px; border-radius: 12px; overflow-x: auto;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
+                    <thead>
+                        <tr style="border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">
+                            <th style="padding: 12px 16px;">Resource Title</th>
+                            <th style="padding: 12px 16px;">Author</th>
+                            <th style="padding: 12px 16px;">Borrowed Date</th>
+                            <th style="padding: 12px 16px;">Returned Date</th>
+                            <th style="padding: 12px 16px; text-align: right;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse($history as $item)
+                            <tr style="border-bottom: 1px solid rgba(255,255,255,0.03);">
+                                <td style="padding: 16px; font-weight: 600; color: var(--text-primary);">{{ $item->resource->title }}</td>
+                                <td style="padding: 16px; color: var(--text-secondary);">{{ $item->resource->author }}</td>
+                                <td style="padding: 16px; color: var(--text-secondary);">{{ $item->borrowed_at->format('M d, Y') }}</td>
+                                <td style="padding: 16px; color: var(--text-secondary);">{{ $item->returned_at->format('M d, Y') }}</td>
+                                <td style="padding: 16px; text-align: right; color: var(--accent-emerald); font-weight: 600;">Returned</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="5" style="padding: 24px; text-align: center; color: var(--text-secondary);">No previous checkouts recorded.</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
 
         <!-- Custom recommendations -->
         <div>

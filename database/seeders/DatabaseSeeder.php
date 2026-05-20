@@ -11,11 +11,20 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Create demo user
+        // Create admin user
         User::create([
             'name' => 'Library Admin',
             'email' => 'admin@library.com',
             'password' => bcrypt('password'),
+            'role' => 'admin',
+        ]);
+
+        // Create standard user
+        User::create([
+            'name' => 'Jane Doe',
+            'email' => 'user@library.com',
+            'password' => bcrypt('password'),
+            'role' => 'user',
         ]);
 
         // Categories

@@ -71,13 +71,34 @@
                         
                         <!-- Borrow CTA -->
                         <div style="display: flex; gap: 20px; align-items: center;">
-                            @if($resource->available_copies > 0)
-                                <button class="nav-btn btn-ripple" style="padding: 15px 40px; font-size: 14px; border-radius: 8px;" onclick="borrowResource()">Borrow Resource</button>
-                                <span style="font-size: 14px; color: var(--accent-emerald);">● Ready for checkout</span>
+                            @auth
+                                @php
+                                    $hasBorrowed = \App\Models\Borrowing::where('user_id', auth()->id())
+                                        ->where('resource_id', $resource->id)
+                                        ->whereNull('returned_at')
+                                        ->exists();
+                                @endphp
+                                @if($hasBorrowed)
+                                    <a href="{{ route('dashboard') }}" class="nav-btn btn-ripple" style="padding: 15px 40px; font-size: 14px; border-radius: 8px; text-decoration: none; text-align: center; display: inline-block; background: rgba(234,179,8,0.2); border-color: var(--accent-gold);">Currently Reading (View Dashboard)</a>
+                                @elseif($resource->available_copies > 0)
+                                    <button class="nav-btn btn-ripple" style="padding: 15px 40px; font-size: 14px; border-radius: 8px; cursor: pointer;" onclick="borrowResource()">Borrow Resource</button>
+                                    <form id="borrow-form" action="{{ route('resources.borrow', $resource->id) }}" method="POST" style="display: none;">
+                                        @csrf
+                                    </form>
+                                    <span style="font-size: 14px; color: var(--accent-emerald);">● Ready for checkout</span>
+                                @else
+                                    <button class="nav-btn" style="padding: 15px 40px; font-size: 14px; border-radius: 8px; opacity: 0.5; cursor: not-allowed;" disabled>Out of Stock</button>
+                                    <span style="font-size: 14px; color: #ef4444;">● All copies currently loaned</span>
+                                @endif
                             @else
-                                <button class="nav-btn" style="padding: 15px 40px; font-size: 14px; border-radius: 8px; opacity: 0.5; cursor: not-allowed;" disabled>Out of Stock</button>
-                                <span style="font-size: 14px; color: #ef4444;">● All copies currently loaned</span>
-                            @endif
+                                @if($resource->available_copies > 0)
+                                    <a href="{{ route('login') }}" class="nav-btn btn-ripple" style="padding: 15px 40px; font-size: 14px; border-radius: 8px; text-decoration: none; text-align: center; display: inline-block;">Login to Borrow</a>
+                                    <span style="font-size: 14px; color: var(--accent-emerald);">● Ready for checkout</span>
+                                @else
+                                    <button class="nav-btn" style="padding: 15px 40px; font-size: 14px; border-radius: 8px; opacity: 0.5; cursor: not-allowed;" disabled>Out of Stock</button>
+                                    <span style="font-size: 14px; color: #ef4444;">● All copies currently loaned</span>
+                                @endif
+                            @endauth
                         </div>
                     </div>
 
@@ -238,10 +259,7 @@ function closeBorrowModal() {
 }
 
 function executeBorrow() {
-    // Show quick borrow simulation message
-    alert('Resource borrowed successfully! Added to your dashboard.');
-    closeBorrowModal();
-    window.location.href = "{{ route('dashboard') }}";
+    document.getElementById('borrow-form').submit();
 }
 </script>
 @endsection
