@@ -76,9 +76,13 @@ echo "--> Detected PHP version: $PHP_VERSION (Service: $PHP_FPM_SERVICE)"
 # Replace placeholder socket and server_name in the Nginx configuration
 sudo sed -i "s/php8.3-fpm.sock/php$PHP_VERSION-fpm.sock/g" "$NGINX_CONF"
 
-# Replace server_name in the Nginx configuration with public IP if possible
-PUBLIC_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4 || echo "_")
+# Fetch the public IP using fallback order (public API first, then AWS metadata)
+PUBLIC_IP=$(curl -s https://ifconfig.me || curl -s http://169.254.169.254/latest/meta-data/public-ipv4 || echo "_")
+
 if [ -n "$PUBLIC_IP" ] && [ "$PUBLIC_IP" != "_" ]; then
+    echo "--> Setting APP_URL in .env to http://$PUBLIC_IP..."
+    sed -i "s|APP_URL=http://localhost|APP_URL=http://$PUBLIC_IP|g" .env
+    
     echo "--> Detected EC2 Public IP: $PUBLIC_IP. Setting in Nginx config..."
     sudo sed -i "s/server_name _;/server_name $PUBLIC_IP;/" "$NGINX_CONF"
 fi
