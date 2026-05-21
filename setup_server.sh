@@ -43,6 +43,11 @@ else
 fi
 
 # 6. Install PHP Composer dependencies
+echo "--> Preparing write permissions for Composer..."
+sudo usermod -a -G www-data $USER
+sudo chown -R $USER:www-data storage bootstrap/cache database 2>/dev/null || true
+sudo chmod -R 775 storage bootstrap/cache database 2>/dev/null || true
+
 echo "--> Installing composer dependencies (no-dev, optimized)..."
 composer install --no-dev --optimize-autoloader
 
@@ -88,9 +93,10 @@ if [ -f /etc/nginx/sites-enabled/default ]; then
     sudo rm /etc/nginx/sites-enabled/default
 fi
 
-# 10. Set directory permissions for www-data (Nginx user)
+# 10. Set directory permissions for user and www-data group
 echo "--> Adjusting directory ownership and permissions..."
-sudo chown -R www-data:www-data storage bootstrap/cache database
+sudo chown -R $USER:www-data storage bootstrap/cache database
+sudo chmod -R 775 storage bootstrap/cache database
 
 # 11. Test Nginx Configuration
 echo "--> Verifying Nginx configuration..."
