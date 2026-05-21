@@ -63,6 +63,14 @@ echo "--> Configuring Nginx server block..."
 NGINX_CONF="/etc/nginx/sites-available/libraverse"
 sudo cp nginx.conf.example "$NGINX_CONF"
 
+# Detect installed PHP version dynamically (e.g., 8.5)
+PHP_VERSION=$(php -r "echo PHP_MAJOR_VERSION.'.'.PHP_MINOR_VERSION;")
+PHP_FPM_SERVICE="php${PHP_VERSION}-fpm"
+echo "--> Detected PHP version: $PHP_VERSION (Service: $PHP_FPM_SERVICE)"
+
+# Replace placeholder socket and server_name in the Nginx configuration
+sudo sed -i "s/php8.3-fpm.sock/php$PHP_VERSION-fpm.sock/g" "$NGINX_CONF"
+
 # Replace server_name in the Nginx configuration with public IP if possible
 PUBLIC_IP=$(curl -s http://169.254.169.254/latest/meta-data/public-ipv4 || echo "_")
 if [ -n "$PUBLIC_IP" ] && [ "$PUBLIC_IP" != "_" ]; then
@@ -91,7 +99,7 @@ sudo nginx -t
 # 12. Restart Nginx and PHP-FPM
 echo "--> Restarting services..."
 sudo systemctl restart nginx
-sudo systemctl restart php8.3-fpm
+sudo systemctl restart "$PHP_FPM_SERVICE"
 
 echo "==========================================="
 echo " Setup Completed Successfully!"
