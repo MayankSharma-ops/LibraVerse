@@ -61,7 +61,7 @@ fi
 
 # 8. Run migrations and database seeding
 echo "--> Running migrations and seeders..."
-php artisan migrate --force --seed --ansi
+php artisan migrate:fresh --force --seed --ansi
 
 # 9. Configure Nginx Server Block
 echo "--> Configuring Nginx server block..."
